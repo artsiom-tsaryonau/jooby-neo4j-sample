@@ -1,21 +1,15 @@
 package com.epam.project;
 
+import com.epam.project.domain.Movie;
+import com.epam.project.domain.Role;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import java.util.*;
 
 public class MovieService {
 
     private final static Logger LOG = LoggerFactory.getLogger(MovieService.class);
-
-    private final MovieRepository movieRepository;
-
-    @Inject
-    public MovieService(MovieRepository movieRepository) {
-        this.movieRepository = movieRepository;
-    }
 
     private Map<String, Object> toD3Format(Collection<Movie> movies) {
         List<Map<String, Object>> nodes = new ArrayList<>();
@@ -45,11 +39,6 @@ public class MovieService {
         result.put(key1, value1);
         result.put(key2, value2);
         return result;
-    }
-
-    public Map<String, Object>  graph(int limit) {
-        Collection<Movie> result = movieRepository.graph(limit);
-        return toD3Format(result);
     }
 
 }

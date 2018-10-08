@@ -1,6 +1,6 @@
 package com.epam.project.api;
 
-import com.epam.project.Movie;
+import com.epam.project.domain.Movie;
 
 import java.util.Collection;
 
