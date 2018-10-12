@@ -3,12 +3,17 @@ package com.epam.project.embed;
 import org.jooby.Jooby;
 import org.jooby.json.Jackson;
 import org.jooby.neo4j.Neo4j;
+import org.neo4j.driver.internal.InternalNode;
 import org.neo4j.driver.v1.Driver;
+import org.neo4j.driver.v1.Record;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class MovieRepositoryApp extends Jooby {
     private static final String FIND_BY_TITLE = "MATCH (m:Movie {title:{title}}) RETURN m";
@@ -26,7 +31,7 @@ public class MovieRepositoryApp extends Jooby {
             var title = req.param("title").value();
             var session = require(Driver.class).session();
             try (session) {
-                return session.run(FIND_BY_TITLE, Map.of("title", title));
+                return session.run(FIND_BY_TITLE, Map.of("title", title)).single().asMap();
             }
         });
 
@@ -34,7 +39,17 @@ public class MovieRepositoryApp extends Jooby {
             var titleLike = req.param("title").value();
             var session = require(Driver.class).session();
             try (session) {
-                return session.run(FIND_BY_TITLE_LIKE, Map.of("titleLike", ".*" + titleLike + ".*")).list();
+                Iterable<Record> iterable =
+                        () -> session.run(FIND_BY_TITLE_LIKE, Map.of("titleLike", ".*" + titleLike + ".*"));
+                var list = StreamSupport
+                        .stream(iterable.spliterator(), false)
+                        .map(Record::asMap)
+                        .map(Map::values)
+                        .flatMap(Collection::stream) // nodes
+                        .map(node -> ((InternalNode) node).asMap())
+                        .collect(Collectors.toList());
+                LOGGER.info("Processed list: {}", list);
+                return list;
             }
         });
 
