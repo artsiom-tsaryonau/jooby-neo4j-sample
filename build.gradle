@@ -5,8 +5,11 @@ buildscript {
 
     dependencies {
         classpath "org.jooby:jooby-gradle-plugin:1.5.1"
+        classpath "com.github.jengelman.gradle.plugins:shadow:1.2.4"
     }
 }
+
+apply plugin: "com.github.johnrengelman.shadow"
 
 apply plugin: "application"
 apply plugin: "jooby"

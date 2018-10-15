@@ -6,7 +6,7 @@ import org.jooby.Jooby;
 import org.jooby.json.Jackson;
 import org.neo4j.ogm.session.SessionFactory;
 
-public class Main extends Jooby {
+public class Main {
 
     public static void main(String[] args) {
         var app = new Jooby().port(8888);
